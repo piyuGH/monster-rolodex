@@ -1,50 +1,58 @@
 import React, { Component } from "react";
 import "./App.css";
 import { CardList } from "./components/card-list/card-list.component";
+import { SearchBox } from "./components/search-box/search-box.component";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      string: "Hello Piyush",
-      monsters: [
-        {
-          name: "Frankinstine",
-          id: "a001",
-        },
-        {
-          name: "Dracula",
-          id: "a002",
-        },
-        {
-          name: "Zombiee",
-          id: "a003",
-        },
-      ],
+      monsters: [],
+      searchField: "",
     };
   }
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch(`https://jsonplaceholder.typicode.com/users`)
       .then((response) => response.json())
       .then((users) => this.setState({ monsters: users }));
     //.then((users) => console.log(users));
   }
 
-  render() {    
+  render() {
+    //const monsters = this.state.monsters;
+    //const searchField = this.state.searchField;
+    const { monsters, searchField } = this.state; //destructuring
+
+    const filteredMonsters = monsters.filter((monster) =>
+      monster.name.toLowerCase().includes(searchField.toLowerCase())
+    );
+
     return (
-      <div className="App">        
-        <header className="App-header">
-          <p>{this.state.string}</p>
-          <button onClick={() => this.setState({ string: "Hello Patel" })}>
-            Change Text
-          </button>
-        </header>
-        {this.state.monsters.map((monster) => (
-          <h1 key={monster.id}>{monster.name}</h1>
-        ))}
+      <div className="App">
+        <SearchBox
+          placeholder="search monster"
+          handleChange={(e) => this.setState({ searchField: e.target.value })}
+        />
+
+        <CardList monsters={filteredMonsters} />
       </div>
     );
   }
 }
 
 export default App;
+/*
+
+<CardList monsters={this.state.monsters} />
+//---SearchBox
+<input
+          type="search"
+          placeholder="search monster"
+          onChange={(e) =>
+            this.setState({ searchField: e.target.value }, () =>
+              console.log(this.state)
+            )
+          }
+        />
+
+*/
